@@ -84,6 +84,7 @@ class OidcService
             'redirectUri'           => url('/oidc/callback'),
             'authorizationEndpoint' => $config['authorization_endpoint'],
             'tokenEndpoint'         => $config['token_endpoint'],
+            'userinfoEndpoint'      => $config['userinfo_endpoint'],
         ]);
 
         // Use keys if configured
@@ -216,6 +217,17 @@ class OidcService
             $settings->issuer,
             $settings->keys,
         );
+
+        if (!empty($settings->userinfoEndpoint)) {
+            $provider = $this->getProvider($settings);
+            $request = $provider->getAuthenticatedRequest('GET', $settings->userinfoEndpoint, $accessToken->getToken());
+            $response = $provider->getParsedResponse($request);
+            $claims = $idToken->getAllClaims();
+            foreach ($response as $key => $value) {
+                $claims[$key] = $value;
+            }
+            $idToken->replaceClaims($claims);
+        }
 
         $returnClaims = Theme::dispatch(ThemeEvents::OIDC_ID_TOKEN_PRE_VALIDATE, $idToken->getAllClaims(), [
             'access_token' => $accessToken->getToken(),

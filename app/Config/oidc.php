@@ -35,6 +35,7 @@ return [
     // OAuth2 endpoints.
     'authorization_endpoint' => env('OIDC_AUTH_ENDPOINT', null),
     'token_endpoint'         => env('OIDC_TOKEN_ENDPOINT', null),
+    'userinfo_endpoint'      => env('OIDC_USERINFO_ENDPOINT', null),
 
     // Add extra scopes, upon those required, to the OIDC authentication request
     // Multiple values can be provided comma seperated.

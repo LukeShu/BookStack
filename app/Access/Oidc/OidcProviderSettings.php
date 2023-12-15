@@ -21,6 +21,7 @@ class OidcProviderSettings
     public ?string $redirectUri;
     public ?string $authorizationEndpoint;
     public ?string $tokenEndpoint;
+    public ?string $userinfoEndpoint;
 
     /**
      * @var string[]|array[]
@@ -127,6 +128,10 @@ class OidcProviderSettings
             $discoveredSettings['tokenEndpoint'] = $result['token_endpoint'];
         }
 
+        if (!empty($result['userinfo_endpoint'])) {
+            $discoveredSettings['userinfoEndpoint'] = $result['userinfo_endpoint'];
+        }
+
         if (!empty($result['jwks_uri'])) {
             $keys = $this->loadKeysFromUri($result['jwks_uri'], $httpClient);
             $discoveredSettings['keys'] = $this->filterKeys($keys);
@@ -172,7 +177,7 @@ class OidcProviderSettings
      */
     public function arrayForProvider(): array
     {
-        $settingKeys = ['clientId', 'clientSecret', 'redirectUri', 'authorizationEndpoint', 'tokenEndpoint'];
+        $settingKeys = ['clientId', 'clientSecret', 'redirectUri', 'authorizationEndpoint', 'tokenEndpoint', 'userinfoEndpoint'];
         $settings = [];
         foreach ($settingKeys as $setting) {
             $settings[$setting] = $this->$setting;
